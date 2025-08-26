@@ -1,6 +1,6 @@
 ---
 name: "♻️REFACTOR"
-about: '리팩토링 템플릿입니다 '
+about: '리팩토링 템플릿 입니다 '
 title: "♻️ refactor:"
 labels: ":recycle: refactor"
 assignees: ''

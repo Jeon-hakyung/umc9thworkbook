@@ -1,6 +1,6 @@
 ---
 name: "✅ TEST"
-about: '테스트용 템플릿입니다. '
+about: '테스트용 템플릿 입니다. '
 title: "✅ test:"
 labels: "✅test"
 assignees: ''

@@ -1,6 +1,6 @@
 ---
 name: "\U0001F49A CI/CD"
-about: 배포 작업 템플릿입니다.
+about: 배포 작업 템플릿 입니다.
 title: "\U0001F49A ci/cd: "
 labels: ''
 assignees: ''
