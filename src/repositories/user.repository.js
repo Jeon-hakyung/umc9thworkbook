@@ -13,11 +13,12 @@ export const addUser = async (data) => {
     if (confirm[0].isExistEmail) {
       return null;
     }
-
+  
     const [result] = await pool.query(
-      `INSERT INTO user (email, name, gender, birth, address, detail_address, phone_number) VALUES (?, ?, ?, ?, ?, ?, ?);`,
+      `INSERT INTO user (email, password, name, gender, birth, address, detail_address, phone_number) VALUES (?, ?, ?, ?, ?, ?, ?, ?);`,
       [
         data.email,
+        data.password,
         data.name,
         data.gender,
         data.birth,
@@ -27,8 +28,10 @@ export const addUser = async (data) => {
       ]
     );
 
+
     return result.insertId;
   } catch (err) {
+  
     throw new Error(
       `오류가 발생했어요. 요청 파라미터를 확인해주세요. (${err})`
     );

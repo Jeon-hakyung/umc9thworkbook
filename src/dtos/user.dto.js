@@ -4,6 +4,7 @@ export const bodyToUser = (body) => {
     return {
       email: body.email,
       name: body.name,
+      password: body.password,
       gender: body.gender,
       birth,
       address: body.address || "",
@@ -17,6 +18,7 @@ export const responseFromUser=({user, preferences}) => {
     return {
         id: user.id,
         email: user.email,
+       // password: user.password,
         name: user.name,
         gender: user.gender,
         birth: user.birth,

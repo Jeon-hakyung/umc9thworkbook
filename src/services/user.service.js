@@ -1,3 +1,4 @@
+import { join } from "path";
 import { responseFromUser } from "../dtos/user.dto.js";
 import {
   addUser,
@@ -7,9 +8,11 @@ import {
 } from "../repositories/user.repository.js";
 
 export const userSignUp = async (data) => {
+
   const joinUserId = await addUser({
     email: data.email,
     name: data.name,
+    password:data.password,
     gender: data.gender,
     birth: data.birth,
     address: data.address,
