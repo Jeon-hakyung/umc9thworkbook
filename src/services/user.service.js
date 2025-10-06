@@ -6,13 +6,18 @@ import {
   getUserPreferencesByUserId,
   setPreference,
 } from "../repositories/user.repository.js";
+import bcrypt from 'bcrypt';
 
 export const userSignUp = async (data) => {
+  
+  const {password} = data;
+  const saltRounds=10; 
+  const hashedPassword= await bcrypt.hash(password,saltRounds);
 
-  const joinUserId = await addUser({
+  const joinUserId = await addUser({ // DB에 저장하는 로직은 여기 있음 
     email: data.email,
     name: data.name,
-    password:data.password,
+    password: hashedPassword,
     gender: data.gender,
     birth: data.birth,
     address: data.address,
@@ -27,6 +32,8 @@ export const userSignUp = async (data) => {
   for (const preference of data.preferences) {
     await setPreference(joinUserId, preference);
   }
+
+ 
 
   const user = await getUser(joinUserId);
   const preferences = await getUserPreferencesByUserId(joinUserId);

@@ -18,7 +18,6 @@ export const responseFromUser=({user, preferences}) => {
     return {
         id: user.id,
         email: user.email,
-       // password: user.password,
         name: user.name,
         gender: user.gender,
         birth: user.birth,
