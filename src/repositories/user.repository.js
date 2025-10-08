@@ -1,43 +1,34 @@
 import { pool } from "../db.config.js";
+import { Prisma } from "@prisma/client";
 
 // User 데이터 삽입
 export const addUser = async (data) => {
-  const conn = await pool.getConnection();
 
-  try {
-    const [confirm] = await pool.query(
-      `SELECT EXISTS(SELECT 1 FROM user WHERE email = ?) as isExistEmail;`,
-      data.email
-    );
-
-    if (confirm[0].isExistEmail) {
-      return null;
-    }
-  
-    const [result] = await pool.query(
-      `INSERT INTO user (email, password, name, gender, birth, address, detail_address, phone_number) VALUES (?, ?, ?, ?, ?, ?, ?, ?);`,
-      [
-        data.email,
-        data.password,
-        data.name,
-        data.gender,
-        data.birth,
-        data.address,
-        data.detailAddress,
-        data.phoneNumber,
-      ]
-    );
-
-
-    return result.insertId;
-  } catch (err) {
-  
-    throw new Error(
-      `오류가 발생했어요. 요청 파라미터를 확인해주세요. (${err})`
-    );
-  } finally {
-    conn.release();
+  // 이메일 중복을 확인함 
+  const user = await prisma.user.findFirst({
+    where: {email: data.email},
+  });
+  if (user) {
+    // 이미 존재하는 이메일 
+    return null;
   }
+  
+  // 새로운 유저 생성 
+  const created= await prisma.user.create({
+    data: {
+      email: data.email,
+      password: data.password,
+      name: data.name,
+      gender: data.gender,
+      birth: data.birth,
+      address: data.address,
+      detailAddress: data.detailAddress,
+      phoneNumber: data.phoneNumber,
+    },
+  });
+  // 생성된 유저의 id를 반환함 
+  return created.id;
+
 };
 
 // 사용자 정보 얻기
