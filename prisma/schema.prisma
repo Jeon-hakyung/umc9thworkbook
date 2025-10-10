@@ -29,6 +29,27 @@ model User {
   @@map("user")
 }
 
+model Region {
+  id     Int     @id @default(autoincrement())
+  name   String  @db.VarChar(100)
+
+  stores Store[]
+
+  @@map("region")
+}
+
+model Store {
+  id        Int     @id @default(autoincrement())
+  name      String  @db.VarChar(100)
+  address   String  @db.VarChar(255)
+  region    Region  @relation(fields: [regionId], references: [id])
+  regionId  Int     @map("region_id")
+
+  @@index([regionId], map: "region_id")
+  @@map("store")
+}
+
+
 model FoodCategory {
   id   Int    @id @default(autoincrement())
   name String @db.VarChar(100)
@@ -39,7 +60,7 @@ model FoodCategory {
 
 }
 
-model UserFavorCategory {
+model UserFavorCategory { // 매핑테이블 
   id             Int          @id @default(autoincrement())
   user           User         @relation(fields: [userId], references: [id])
   userId         Int          @map("user_id")
