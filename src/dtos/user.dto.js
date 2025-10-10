@@ -15,19 +15,13 @@ export const bodyToUser = (body) => {
   };
 
 export const responseFromUser=({user, preferences}) => {
-    return {
-        id: user.id,
-        email: user.email,
-        name: user.name,
-        gender: user.gender,
-        birth: user.birth,
-        address: user.address,
-        detailAddress: user.detail_address, 
-        phoneNumber: user.phone_number,     
-        preferences: preferences.map((pref) => ({
-          id: pref.food_category_id,
-          name: pref.name,
-        })),
-      };
+  const preferFoods = preferences.map(
+    (preference) => preference.foodCategory.name
+  );
 
+  return {
+    email: user.email,
+    name: user.name,
+    preferCategory: preferFoods,
+  };
 };

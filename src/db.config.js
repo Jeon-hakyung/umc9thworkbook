@@ -2,7 +2,7 @@ import {PrismaClient} from "@prisma/client";
 import mysql from "mysql2/promise";
 import 'dotenv/config';
 
-export const prisma=new PrismaClient();
+export const prisma=new PrismaClient({log: ["query"]});
 
 export const pool = mysql.createPool({
   host: process.env.DB_HOST ?? "127.0.0.1", // mysql의 hostname
