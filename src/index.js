@@ -4,7 +4,7 @@ import express from "express";       // -> ES Module
 import cors from "cors";
 import { checkDbConnection,pool } from './db.config.js';
 import { handleUserSignUp } from "./controllers/user.controller.js";
-import { handleAddStore } from "./controllers/store.controller.js";
+import { handleAddStore,handleListStoreReviews } from "./controllers/store.controller.js";
 import {body} from 'express-validator';
 
 
@@ -38,6 +38,9 @@ app.post(
 );
 // 가게 추가하는 api 
 app.post("/api/v1/stores", handleAddStore);
+// 리뷰 조회하는 api
+app.get("/api/v1/stores/:storeId/reviews", handleListStoreReviews);
+
 
 // 테스트용 API
 app.get("/test", async (req, res) => {

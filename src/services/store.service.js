@@ -1,4 +1,5 @@
-import { addStores } from "../repositories/store.repository.js";
+import { addStores,getAllStoreReviews } from "../repositories/store.repository.js";
+import { responseFromReviews } from "../dtos/store.dto.js";
 
 // 서비스에서는 레포지토리를 호출합니다
 
@@ -14,4 +15,9 @@ export const addStore = async (data) => {
     })
 
     return storeId;
+}
+
+export const listStoreReviews= async (storeId) => {
+    const reviews= await getAllStoreReviews(storeId);
+    return responseFromReviews(reviews);
 }

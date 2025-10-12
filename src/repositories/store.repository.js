@@ -1,4 +1,4 @@
-import { pool } from "../db.config.js";
+import { pool,prisma } from "../db.config.js";
 
 // 가게 데이터 삽입하기
 export const addStores= async (data) => {
@@ -24,3 +24,22 @@ export const addStores= async (data) => {
         conn.release();
     }
 }
+
+export const getAllStoreReviews = async (storeId, cursor) => {
+
+    const reviews = await prisma.review.findMany({
+        select: {
+          id: true,
+          content: true,
+          store: true,
+          user: true,
+          createdAt: true,
+        },
+        where: { storeId: storeId, id: {gt: cursor} },
+        orderBy: { id: "asc" },
+        take: 5,
+      });
+    
+      return reviews;
+}
+
