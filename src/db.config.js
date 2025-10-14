@@ -2,9 +2,22 @@ import {PrismaClient} from "@prisma/client";
 import mysql from "mysql2/promise";
 import 'dotenv/config';
 
-export const prisma=new PrismaClient({log: ["query"]});
+export const prisma=new PrismaClient( 
+  {log: ["query", "error", "warn"]});
+
+// ✅ 모든 쿼리에 대해 실행 시간(ms)을 측정
+prisma.$on("query", (event) => {
+  const start = Date.now();
+
+  // Prisma의 'query' 이벤트는 쿼리 실행 후 바로 발생하므로,
+  // 실제 실행 시간은 event.duration(ms)에 포함되어 있음
+  console.log(`[SQL Query Time] ${event.duration} ms`);
+  console.log(`Query: ${event.query}`);
+});
 
 export const pool = mysql.createPool({
+
+  // TODO: 추후 Prisma로 완전 전환 후 mysql pool 제거 예정 
   host: process.env.DB_HOST ?? "127.0.0.1", // mysql의 hostname
   port: Number(process.env.DB_PORT ?? 3306), // 포트 번호
   user: process.env.DB_USER, // user 이름
