@@ -17,16 +17,14 @@ export const handleUserSignUp = async (req, res, next) => {
   }
   
 
-  const {password}= req.body;
+  const { password }= req.body;
   console.log("비밀번호",password);
   try {
     const user = await userSignUp(bodyToUser(req.body));
-    res.status(StatusCodes.CREATED).json({ result: user });
+    res.status(StatusCodes.OK).success(user);
   } catch (error) {
     console.error(error);
-    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      message:'서버 오류 발생, 다시 시도해주세요'
-    })
+    next(error);
   }
 
  
