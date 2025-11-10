@@ -79,6 +79,27 @@ app.get("/openapi.json", async (req, res, next) => {
       description: "UMC 9th Node.js 테스트 프로젝트입니다.",
     },
     host: "localhost:3000",
+
+    // ▼▼▼ 'components' 섹션 추가 ▼▼▼
+  components: {
+    schemas: {
+      // "표준 실패 응답"을 공통 부품(StandardError)으로 정의
+      StandardError: { 
+        type: "object",
+        properties: {
+          resultType: { type: "string", example: "FAIL" },
+          error: {
+            type: "object",
+            properties: {
+              errorCode: { type: "string", example: "E400" }, // 400번대 에러
+              reason: { type: "string" }
+            }
+          },
+          success: { type: "object", nullable: true, example: null }
+        }
+      }
+    }
+  }
   };
 
   const result = await swaggerAutogen(options)(outputFile, routes, doc);
