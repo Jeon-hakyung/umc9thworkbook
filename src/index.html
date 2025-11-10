@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>CORS Credentials 에러 테스트</title>
+</head>
+<body>
+  <h1>F12 개발자 도구의 콘솔을 확인하세요.</h1>
+  <script>
+    async function testError() {
+      console.log('에러 테스트 시작...');
+      try {
+        // 🚨 원인 2: 'credentials: 'include'' 옵션
+        // "쿠키 같은 민감 정보를 포함해서 요청할게요!"라고 선언
+        const response = await fetch('http://localhost:3000/api/test', {
+          credentials: 'include' 
+        });
+        
+        const data = await response.json();
+        console.log('성공 (이 메시지는 보이면 안 됨):', data);
+
+      } catch (error) {
+        console.error('에러 발생!');
+        console.error(error); // 여기에 그 오류 메시지가 찍힙니다.
+      }
+    }
+    testError();
+  </script>
+</body>
+</html>

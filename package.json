@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node src/index.js",
-    "dev": "nodemon -e js,json,prisma --exec \"prisma generate && node src/index.js\""
+    "dev": "nodemon --exec node src/index.js"
   },
   "author": "",
   "license": "ISC",
@@ -23,6 +23,8 @@
     "morgan": "^1.10.1",
     "mysql2": "^3.14.3",
     "prisma": "^6.17.0",
+    "swagger-autogen": "^2.23.7",
+    "swagger-ui-express": "^5.0.1",
     "undefined": "^0.1.0"
   },
   "devDependencies": {
