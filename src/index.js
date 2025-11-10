@@ -8,6 +8,8 @@ import { handleAddStore,handleListStoreReviews } from "./controllers/store.contr
 import {body} from 'express-validator';
 import morgan from "morgan";
 import cookieParser from 'cookie-parser';
+import swaggerAutogen from "swagger-autogen";
+import swaggerUiExpress from "swagger-ui-express";
 
 
 
@@ -38,13 +40,50 @@ app.use((req,res,next)=> {
 });
 
 
-app.use(cors());                            // cors 방식 허용
+app.use(cors({
+  //1. origin을 * 대신 정확한 주소 사용 
+  origin: ["http://127.0.0.1:5500", "http://localhost:3000"], 
+
+  // 2. 쿠키를 허용하는 credentials 옵션 켜기
+  credentials: true, 
+}));                            // cors 방식 허용
 app.use(express.static('public'));          // 정적 파일 접근
 app.use(express.json());                    // request의 본문을 json으로 해석할 수 있도록 함 (JSON 형태의 요청 body를 파싱하기 위함)
 app.use(express.urlencoded({ extended: false })); // 단순 객체 문자열 형태로 본문 데이터 해석
 app.use(morgan('dev'));
 app.use(cookieParser()); // 미들웨어로 등록 
 
+// 스웨거 설정하기 
+app.use(
+  "/docs",
+  swaggerUiExpress.serve,
+  swaggerUiExpress.setup({}, {
+    swaggerOptions: {
+      url: "/openapi.json",
+    },
+  })
+);
+
+app.get("/openapi.json", async (req, res, next) => {
+  // #swagger.ignore = true
+  const options = {
+    openapi: "3.0.0",
+    disableLogs: true,
+    writeOutputFile: false,
+  };
+  const outputFile = "/dev/null"; // 파일 출력은 사용하지 않습니다.
+  const routes = ["./src/index.js"];
+  const doc = {
+    info: {
+      title: "UMC 9th",
+      description: "UMC 9th Node.js 테스트 프로젝트입니다.",
+    },
+    host: "localhost:3000",
+  };
+
+  const result = await swaggerAutogen(options)(outputFile, routes, doc);
+  res.json(result ? result.data : null);
+});
 
 
 app.get('/', (req, res) => {
@@ -106,6 +145,10 @@ app.get('/getcookie', (req,res)=> {
   }
 
 });
+
+app.get('/api/test', (req,res)=> {
+  res.json({message: '이 응답은 보이면 안 됩니다!'});
+})
 
 const isLogin= (req,res,next) => {
     // cookie-parser가 만들어준 req.cookies 객체에서 username을 확인
