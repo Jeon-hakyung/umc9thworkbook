@@ -11,14 +11,23 @@ import cookieParser from 'cookie-parser';
 import swaggerAutogen from "swagger-autogen";
 import swaggerUiExpress from "swagger-ui-express";
 
-
+import { PrismaSessionStore } from "@quixo3/prisma-session-store";
+import session from "express-session";
+import passport from "passport";
+import { googleStrategy, jwtStrategy} from "./auth.config.js";
+import { prisma } from "./db.config.js";
 
 dotenv.config();
+
+passport.use(googleStrategy);
+passport.use(jwtStrategy);
+
 
 console.log("✅ index.js 실행됨");
 console.log("✅ PORT:", process.env.PORT);
 
 const app = express();
+
 const port = process.env.PORT;
 
 
@@ -52,6 +61,7 @@ app.use(express.json());                    // request의 본문을 json으로 �
 app.use(express.urlencoded({ extended: false })); // 단순 객체 문자열 형태로 본문 데이터 해석
 app.use(morgan('dev'));
 app.use(cookieParser()); // 미들웨어로 등록 
+app.use(passport.initialize());
 
 // 스웨거 설정하기 
 app.use(
@@ -62,6 +72,36 @@ app.use(
       url: "/openapi.json",
     },
   })
+);
+
+
+
+app.get("/oauth2/login/google", 
+  passport.authenticate("google", { 
+    session: false 
+  })
+);
+
+app.get(
+  "/oauth2/callback/google",
+  // ★ 2. 세션을 사용하지 않도록 설정
+  passport.authenticate("google", {
+    session: false,
+    failureRedirect: "/login-failed", 
+  }),
+  (req, res) => {
+    const tokens = req.user; 
+
+
+    res.status(200).json({
+      resultType: "SUCCESS",
+      error: null,
+      success: {
+          message: "Google 로그인 성공!",
+          tokens: tokens, // { "accessToken": "...", "refreshToken": "..." }
+      }
+    });
+  }
 );
 
 app.get("/openapi.json", async (req, res, next) => {
@@ -171,27 +211,24 @@ app.get('/api/test', (req,res)=> {
   res.json({message: '이 응답은 보이면 안 됩니다!'});
 })
 
-const isLogin= (req,res,next) => {
-    // cookie-parser가 만들어준 req.cookies 객체에서 username을 확인
-    const { username } = req.cookies; 
 
-    if (username) {
-        // 1. 쿠키가 있다 = 로그인한 사용자다!
-        // 다음(next) 단계 (즉, 실제 라우트 핸들러)로 보냅니다.
-        console.log(`[인증 성공] ${username}님, 환영합니다.`);
-        next(); 
-    } else {
-        // 2. 쿠키가 없다 = 로그인하지 않았다!
-        // next()를 호출하지 않고, 여기서 요청을 끝내버립니다.
-        console.log('[인증 실패] 로그인이 필요합니다.');
-        res.status(401).send('<script>alert("로그인이 필요합니다!");location.href="/login";</script>');
-    }
-};
 
 
 // 3-2. 로그인 페이지 (리다이렉트될 곳)
 app.get('/login', (req, res) => {
   res.send('<h1>로그인 페이지</h1><p>로그인이 필요한 페이지에서 튕겨나오면 여기로 옵니다.</p>');
+});
+
+const isLogin = passport.authenticate('jwt', { session: false });
+
+// 테스트용 보호된 라우트
+app.get('/mypage', isLogin, (req, res) => {
+  // isLogin (passport.authenticate)이 성공하면,
+  // jwtStrategy의 done(null, user) 덕분에 'req.user'가 생성됩니다!
+  res.status(200).success({
+    message: `인증 성공! ${req.user.name}님의 마이페이지입니다.`,
+    user: req.user,
+  });
 });
 
 // 3-3. ★★★ 보호된 페이지 (isLogin 미들웨어 적용) ★★★
@@ -234,6 +271,30 @@ app.use((err, req, res, next) => {
     reason: err.reason || err.message || null,
     data: err.data || null,
   });
+});
+
+app.use(
+  session({
+    cookie: {
+      maxAge: 7 * 24 * 60 * 60 * 1000, // ms
+    },
+    resave: false,
+    saveUninitialized: false,
+    secret: process.env.EXPRESS_SESSION_SECRET,
+    store: new PrismaSessionStore(prisma, {
+      checkPeriod: 2 * 60 * 1000, // ms
+      dbRecordIdIsSessionId: true,
+      dbRecordIdFunction: undefined,
+    }),
+  })
+);
+
+
+
+app.get("/", (req, res) => {
+  // #swagger.ignore = true
+  console.log(req.user);
+  res.send("Hello World!");
 });
 
 checkDbConnection().then(() => {
