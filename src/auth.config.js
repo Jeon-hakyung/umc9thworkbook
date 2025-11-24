@@ -71,10 +71,7 @@ export const googleStrategy = new GoogleStrategy(
       const jwtAccessToken = generateAccessToken(user);
       const jwtRefreshToken = generateRefreshToken(user);
 
-      // (선택적: Refresh Token을 DB에 저장하여 관리)
-      // await prisma.user.update({ where: { id: user.id }, data: { refreshToken: jwtRefreshToken } });
-
-      // 6. 'user' 객체 대신 '토큰'을 다음으로 넘깁니다.
+      
       return cb(null, {
         accessToken: jwtAccessToken,
         refreshToken: jwtRefreshToken,
