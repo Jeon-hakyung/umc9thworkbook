@@ -35,7 +35,7 @@ jobs:
       - name: Copy Workspace
         run: |
           ssh umc9thworkbook 'sudo mkdir -p /opt/app'
-          ssh umc9thworkbook 'sudo chown 777 /opt/app'
+          ssh umc9thworkbook 'sudo chmod 777 /opt/app'
           scp -r ./* umc9thworkbook:/opt/app
 
       - name: Install dependencies
