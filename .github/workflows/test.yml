@@ -1,0 +1,32 @@
+name: test
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Test prisma generate
+        run: npx prisma generate
+
+      - name: Test build
+        run: npm run build
+
+      - name: Test type error
+        # tsc --noEmit은 파일을 생성하지 않고 타입 검사만 빠르게 수행합니다.
+        run: npx tsc --noEmit
