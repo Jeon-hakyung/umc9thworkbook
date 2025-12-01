@@ -98,7 +98,7 @@ export const handleUserSignUp = async (req: Request, res:Response, next:NextFunc
  
 };
 
-export const handleUserLogin= async (req, res, next) => {
+export const handleUserLogin= async (req: Request, res:Response, next: NextFunction) => {
   console.log("로그인을 요청했습니다.");
   
 }
