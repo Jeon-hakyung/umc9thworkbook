@@ -3,9 +3,10 @@ import { bodyToUser } from "../dtos/user.dto.js";
 import { userSignUp } from "../services/user.service.js";
 import { handleAddStore } from "./store.controller.js";
 import {validationResult} from 'express-validator';
+import { Request, Response, NextFunction } from "express";
 
 
-export const handleUserSignUp = async (req, res, next) => {
+export const handleUserSignUp = async (req: Request, res:Response, next:NextFunction) => {
   /*
     #swagger.summary = '회원 가입 API';
     #swagger.requestBody = {
