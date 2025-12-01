@@ -1,6 +1,8 @@
 {
-    "extends": "@tsconfig/node20/tsconfig.json",
+    "extends": "@tsconfig/node20/tsconfig.json",  // ⬅️ 여기 콤마 추가!
     "compilerOptions": {
-        "typeRoots": ["./node_modules/@types", "./@types"]
-      }
-}
+      "typeRoots": ["./node_modules/@types", "./@types"], // ⬅️ 여기 콤마 추가!
+      "allowJs": true,
+      "outDir": "./dist",
+    }
+  }

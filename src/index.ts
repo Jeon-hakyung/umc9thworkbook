@@ -6,10 +6,10 @@ import cookieParser from "cookie-parser";
 import swaggerAutogen from "swagger-autogen";
 import swaggerUiExpress from "swagger-ui-express";
 import passport from "passport";
-import { googleStrategy, jwtStrategy } from "./auth.config";
-import { checkDbConnection } from "./db.config";
-import { handleUserSignUp } from "./controllers/user.controller";
-import { handleAddStore, handleListStoreReviews } from "./controllers/store.controller";
+import { googleStrategy, jwtStrategy } from "./auth.config.js";
+import { checkDbConnection } from "./db.config.js";
+import { handleUserSignUp } from "./controllers/user.controller.js";
+import { handleAddStore, handleListStoreReviews } from "./controllers/store.controller.js";
 import { body } from "express-validator";
 
 dotenv.config();
